@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AA Benchmark 定制榜单</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="title-wrap">
+      <h1>AA Benchmark 定制榜单</h1>
+      <p class="subtitle">
+        数据源 <a href="https://artificialanalysis.ai/leaderboards/models" target="_blank" rel="noreferrer">Artificial Analysis Intelligence Index</a>
+        · 仅保留 <b>max / high</b> 档位
+      </p>
+    </div>
+    <div class="actions">
+      <div class="status" id="status">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">加载中…</span>
+      </div>
+      <div class="hl-wrap">
+        <button id="hlBtn" class="btn" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="star-ico">★</span> 高亮 <span id="hlCount" class="count">0</span>
+        </button>
+        <div id="hlPanel" class="hl-panel hidden" role="dialog" aria-label="高亮管理">
+          <div class="hl-panel-head">高亮管理 <span class="hint">关键字命中即高亮</span></div>
+          <div id="hlChips" class="hl-chips"></div>
+          <form id="hlForm" class="hl-form" autocomplete="off">
+            <input id="hlInput" type="text" placeholder="模型名关键字，如 Qwen3.8" />
+            <button class="btn" type="submit">添加</button>
+          </form>
+          <p class="hint">匹配忽略大小写与 -/_ /空格 差异；也可以直接点表格里的 ☆ 快速高亮 / 取消。修改会写入 config.json。</p>
+        </div>
+      </div>
+      <button id="updateBtn" class="btn primary" type="button">
+        <span class="spinner" id="updateSpinner"></span>
+        <span id="updateLabel">更新数据</span>
+      </button>
+    </div>
+  </header>
+
+  <div id="staleBanner" class="banner warn hidden">
+    数据已超过 <span id="staleHours"></span> 小时未更新，点右上角「更新数据」同步最新榜单
+  </div>
+
+  <div id="errorBanner" class="banner error hidden"></div>
+
+  <section class="stats" id="stats"></section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>主榜 Top <span id="topNLabel">50</span> <span class="tag">仅 max / high 档</span></h2>
+      <div class="panel-tools">
+        <input id="searchBox" type="search" placeholder="筛选模型名 / 厂商…" autocomplete="off" />
+        <span class="hint" id="rowCount"></span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th data-key="rank" class="num">#</th>
+            <th data-key="name">模型</th>
+            <th data-key="tier">档位</th>
+            <th data-key="creator">厂商</th>
+            <th data-key="index" class="num sorted-desc">智能指数</th>
+            <th data-key="cost" class="num">成本/任务</th>
+            <th data-key="vpd" class="num" title="智能指数 ÷ 单任务成本，越高越划算">性价比 分/$</th>
+            <th data-key="tps" class="num">速度 t/s</th>
+            <th data-key="ttft" class="num">首字延迟 s</th>
+            <th data-key="context">上下文</th>
+          </tr>
+        </thead>
+        <tbody id="mainBody"></tbody>
+      </table>
+      <div id="mainEmpty" class="empty hidden">没有匹配的模型</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>性价比观察列表 <span class="tag">自选 · 恒定显示</span></h2>
+      <span class="hint">忽略档位过滤，取每个家族的最高档；在 <code>config.json</code> 的 watchlist 里增删</span>
+    </div>
+    <div class="table-wrap">
+      <table id="watchTable">
+        <thead>
+          <tr>
+            <th data-key="pattern">关注项</th>
+            <th data-key="name">模型（当前最高档）</th>
+            <th data-key="tier">档位</th>
+            <th data-key="rank" class="num">全榜原位次</th>
+            <th data-key="index" class="num sorted-desc">智能指数</th>
+            <th data-key="cost" class="num">成本/任务</th>
+            <th data-key="vpd" class="num">性价比 分/$</th>
+            <th data-key="tps" class="num">速度 t/s</th>
+            <th data-key="delta">变化</th>
+          </tr>
+        </thead>
+        <tbody id="watchBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>
+      <b>口径说明</b>：排名基于 Artificial Analysis 智能指数（综合推理 / 知识 / 代码 / Agent / 长上下文 / 指令遵循 / 事实性等 10 项评测）。
+      原 AA 榜单中同一模型的 low / medium / xhigh / non-reasoning 变体已按要求过滤，<b>没有 max 或 high 档的家族整条移除</b>（因此不会出现在主榜）。
+      性价比 = 智能指数 ÷ 单任务成本，仅供参考；▲▼ 为与上一次快照的指数差。
+    </p>
+    <p>成本为 AA 实测的「单个指数任务」平均花费；速度/延迟为 AA 实测 API 表现。榜单每 30 秒刷新一次「距今多久」，数据本身只在点击更新时抓取。</p>
+  </footer>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

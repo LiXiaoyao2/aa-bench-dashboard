@@ -1,0 +1,38 @@
+{
+  "port": 8787,
+  "sourceUrl": "https://artificialanalysis.ai/leaderboards/models",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "fetchTimeoutMs": 45000,
+  "topN": 50,
+  "allowedTiers": [
+    "max",
+    "high",
+    "default"
+  ],
+  "tierOrder": [
+    "max",
+    "high",
+    "xhigh",
+    "medium",
+    "low",
+    "non-reasoning",
+    "default"
+  ],
+  "staleHours": 72,
+  "highlight": [
+    "Step 5"
+  ],
+  "watchlist": [
+    "Qwen3.8 27B",
+    "DeepSeek V4.1 Flash",
+    "MiMo-V2.6-Pro",
+    "MiMo-V2.6-Flash",
+    "GLM-5.3-Flash",
+    "Ling 3.1 Flash",
+    "Qwen3.8-Flash-Next",
+    "Nemotron 3.5 Lightning",
+    "GPT-6 Luna",
+    "KAT-Coder-Pro",
+    "Hy3"
+  ]
+}

@@ -1,0 +1,8 @@
+# 运行期生成的数据（seed.json 是随仓库的兜底数据，需要保留）
+data/latest.json
+data/previous.json
+data/raw/
+
+# 日志与临时文件
+*.log
+.DS_Store

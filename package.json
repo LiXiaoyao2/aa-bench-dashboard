@@ -1,0 +1,11 @@
+{
+  "name": "aa-bench-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "定制化 Artificial Analysis 大模型 Benchmark 排行榜看板（零依赖，node server.js 一把起）",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node tools/build-seed.mjs"
+  }
+}
