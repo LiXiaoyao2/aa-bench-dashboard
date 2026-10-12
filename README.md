@@ -12,6 +12,14 @@ node server.js            # 或 npm start
 
 ---
 
+## 效果图
+
+![运行效果](docs/screenshot.png)
+
+> 档位过滤后的主榜 Top 50 + 自选观察列表；图中 `Qwen3.8 Max`、`Step 5 Preview`、`GLM-5.3-Flash` 三行被高亮（由顶栏「★ 高亮」按钮管理，点表格里的 ☆ 即可开关）。
+
+---
+
 ## 功能
 
 | 功能 | 说明 |
